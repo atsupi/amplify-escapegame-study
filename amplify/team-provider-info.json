@@ -1,0 +1,15 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-amplifyescapegamestu-dev-182744-authRole",
+      "UnauthRoleArn": "arn:aws:iam::074682543290:role/amplify-amplifyescapegamestu-dev-182744-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::074682543290:role/amplify-amplifyescapegamestu-dev-182744-authRole",
+      "Region": "ap-northeast-1",
+      "DeploymentBucketName": "amplify-amplifyescapegamestu-dev-182744-deployment",
+      "UnauthRoleName": "amplify-amplifyescapegamestu-dev-182744-unauthRole",
+      "StackName": "amplify-amplifyescapegamestu-dev-182744",
+      "StackId": "arn:aws:cloudformation:ap-northeast-1:074682543290:stack/amplify-amplifyescapegamestu-dev-182744/ec06a880-3911-11ed-9fc9-0adccf9756a9",
+      "AmplifyAppId": "d3rry5lf2fch4"
+    }
+  }
+}

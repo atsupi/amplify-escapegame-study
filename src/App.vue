@@ -1,10 +1,6 @@
-<template>
-  <img alt="Vue logo" src="./assets/logo.png">
-  <HelloWorld msg="Welcome to Your Vue.js App"/>
-</template>
-
+/* eslint-disable */
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+  import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
@@ -13,6 +9,12 @@ export default {
   }
 }
 </script>
+
+<template>
+  <img alt="Vue logo" src="./assets/logo.png">
+  <HelloWorld msg="Welcome to Your Vue.js App"/>
+</template>
+
 
 <style>
 #app {

@@ -1,0 +1,10 @@
+{
+  "resourceName": "escapegameDB",
+  "tableName": "escapegameDB",
+  "partitionKey": {
+    "fieldName": "ID",
+    "fieldType": "number"
+  },
+  "gsi": [],
+  "triggerFunctions": []
+}

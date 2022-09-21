@@ -9,7 +9,20 @@
       "UnauthRoleName": "amplify-amplifyescapegamestu-dev-182744-unauthRole",
       "StackName": "amplify-amplifyescapegamestu-dev-182744",
       "StackId": "arn:aws:cloudformation:ap-northeast-1:074682543290:stack/amplify-amplifyescapegamestu-dev-182744/ec06a880-3911-11ed-9fc9-0adccf9756a9",
-      "AmplifyAppId": "d3rry5lf2fch4"
+      "AmplifyAppId": "d3rry5lf2fch4",
+      "APIGatewayAuthURL": "https://s3.amazonaws.com/amplify-amplifyescapegamestu-dev-182744-deployment/amplify-cfn-templates/api/APIGatewayAuthStack.json"
+    },
+    "categories": {
+      "auth": {
+        "undefined": {},
+        "false": {}
+      },
+      "function": {
+        "escapegameFunction": {
+          "deploymentBucketName": "amplify-amplifyescapegamestu-dev-182744-deployment",
+          "s3Key": "amplify-builds/escapegameFunction-482b4263754545775842-build.zip"
+        }
+      }
     }
   }
 }

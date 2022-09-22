@@ -84,13 +84,13 @@ export default {
             var raw = JSON.stringify({"ID":id}); 
             // JSONオブジェクトの生成 
             var requestOptions = { 
-                method: 'POST', 
+                method: 'GET', 
                 headers: myHeaders, 
                 body: raw, 
                 redirect: 'follow' 
             }; 
             // API経由でのLambdaからのレスポンスをVueインスタンスに代入する 
-            fetch("APIGateway", requestOptions) 
+            fetch("https://osztepu9jh.execute-api.ap-northeast-1.amazonaws.com/dev/items/" + id, requestOptions) 
             .then(response => response.text()) 
             .then(result => { 
                 vm.ID = JSON.parse(result).body['ID']; 

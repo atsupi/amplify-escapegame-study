@@ -20,7 +20,7 @@
       "function": {
         "escapegameFunction": {
           "deploymentBucketName": "amplify-amplifyescapegamestu-dev-182744-deployment",
-          "s3Key": "amplify-builds/escapegameFunction-482b4263754545775842-build.zip"
+          "s3Key": "amplify-builds/escapegameFunction-41517046733047555a72-build.zip"
         }
       }
     }

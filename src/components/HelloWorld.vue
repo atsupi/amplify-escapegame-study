@@ -1,108 +1,126 @@
+<script setup>
+  import { Authenticator, useAuthenticator } from '@aws-amplify/ui-vue';
+  import '@aws-amplify/ui-vue/styles.css';
+  import { defineProps, ref } from 'vue';
+//  import { fetch } from 'node-fetch'
+  import { API } from 'aws-amplify'
+
+  const auth = useAuthenticator();
+  const debug_mode = true;
+
+  defineProps({msg: String});
+
+  const ID = ref('0');
+  const Situation = ref('状態無し');
+  const Choice1 = ref('なし');
+  const Choice2 = ref('なし'); 
+  const Result = ref('なし');
+  const CorrectChoice = ref('0');
+  const SelectedChoice = ref('0');
+  const GetResult = ref('なし');
+  const GetStatus = ref('0');
+  const GetURL = ref('0');
+  const GetError = ref('0');
+
+  // 選択肢1、選択肢2、リスタートをクリックした時の条件分岐 
+  const selectChoice = (playerChoice) => { 
+    SelectedChoice.value = playerChoice;
+    //リスタートを選択したらゲームスタート時の項目をDynamoDBから取得 
+    if (playerChoice === '0') { 
+        ID.value = 1; 
+        Situation.value = "状態変化1";
+        callAPI(); 
+    //正解の選択肢なら次の段階の項目をDynamoDBから取得 
+    } else if ((CorrectChoice.value != '0') && (playerChoice === CorrectChoice.value)) { 
+        ID.value = ID.value + 1; 
+        callAPI(); 
+    //不正解なら結果を表示 
+    } else if ((CorrectChoice.value != '0') && (playerChoice != CorrectChoice.value)) { 
+        ID.value = 0; 
+        Situation.value = Result.value; 
+        Choice1.value = ''; 
+        Choice2.value = ''; 
+        Result.value = ''; 
+        CorrectChoice.value = '0'; 
+        ID.value = CorrectChoice;
+    } 
+  };
+
+  //APIの呼び出しを定義する 
+  const callAPI = () => { 
+    //idは現在の次の段階を代入 
+    var id = ID.value; 
+    let url = new URL("https://osztepu9jh.execute-api.ap-northeast-1.amazonaws.com/dev/items/" + id);
+    GetURL.value = url;
+    let param = {
+      ID: id,
+    };
+    url.search = new URLSearchParams(param).toString();
+    // API経由でのLambdaからのレスポンスをVueインスタンスに代入する 
+    const APIname = "escapegameAPI";
+    const APIPath = "/items/" + id;
+    const myInit = { // OPTIONAL
+        headers: {}, // OPTIONAL
+        response: true, // OPTIONAL (return the entire Axios response object instead of only response.data)
+        queryStringParameters: {  // OPTIONAL
+            name: 'param',
+        },
+    };
+    var response_data = '';
+
+    API.get(APIname, APIPath, myInit)
+    .then(response => {
+      GetStatus.value = response.status;
+      GetResult.value = response.data;
+      response_data = JSON.stringify(response.data);
+      ID.value = JSON.parse(response_data)['ID']; 
+      Situation.value = JSON.parse(response_data)['Situation']; 
+      Choice1.value = JSON.parse(response_data)['Choice1']; 
+      Choice2.value = JSON.parse(response_data)['Choice2']; 
+      Result.value = JSON.parse(response_data)['Result']; 
+      CorrectChoice.value = JSON.parse(response_data)['Correctchoice']; 
+      console.log('error', ID.value);
+    })
+    .catch(error => {
+      GetError.value = error;
+      console.log('error', error);
+    })
+  };
+
+
+</script>
+
 <template>
-  <authenticator>
-  </authenticator>
+  <authenticator />
   <template v-if="auth.route === 'authenticated'">
     <h1>Hello {{ auth.user?.username }}!</h1>
     <button @click="auth.signOut">Sign out</button>
   </template>
   <div class="hello">
     <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
   </div>
     <p>部屋から脱出せよ！</p> 
     <div id="Situation1"> 
-        <p>{{Situation}}</p> 
+        <p v-if="debug_mode">{{ID}}:{{CorrectChoice}}</p> 
+        <p v-if="debug_mode">{{Situation}}</p> 
+        <p v-if="debug_mode">{{Result}}</p> 
         <p>選択肢１:{{Choice1}}</p> 
-        <button type="button" onclick="selectChoice('1')">選択肢１を選ぶ</button> 
+        <button type="button" @click="selectChoice('1')">選択肢１を選ぶ</button> 
         <p>選択肢２:{{Choice2}}</p> 
-        <button type="button" onclick="selectChoice('2')">選択肢２を選ぶ</button> 
-        <p><button type="button" onclick="selectChoice('0')">リスタート</button></p> 
-    </div> 
+        <button type="button" @click="selectChoice('2')">選択肢２を選ぶ</button> 
+        <p><button type="button" @click="selectChoice('0')">リスタート</button></p> 
+        <p v-if="debug_mode">前回の選択肢: {{SelectedChoice}}</p>
+        <p v-if="debug_mode">GETのURL: {{GetURL}}</p>
+        <p v-if="debug_mode">GETステータス: {{GetStatus}}</p>
+        <p v-if="debug_mode">GETエラー: {{GetError}}</p>
+        <p v-if="debug_mode">GETの結果: {{GetResult}}</p>
+    </div>
 </template>
 
-<script setup>
-  import { createApp } from 'vue'
-  import { Authenticator, useAuthenticator } from '@aws-amplify/ui-vue';
-  import '@aws-amplify/ui-vue/styles.css';
-  const auth = useAuthenticator();
-</script>
-
 <script>
-export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
-        //DynamoDBから受け取った情報を表示するためのVueインスタンスを生成します 
-        const vm = {
-          data() {
-            return {
-                ID:'0', 
-                Situation:'', 
-                Choice1:'', 
-                Choice2:'', 
-                Result:'', 
-                CorrectChoice:'' 
-            }
-          }
-        }
-        createApp(vm).mount("#Situation1");
-        // 選択肢1、選択肢2、リスタートをクリックした時の条件分岐 
-        const selectChoice = (playerChoice)=>{ 
-            //リスタートを選択したらゲームスタート時の項目をDynamoDBから取得 
-            if (playerChoice == '0') { 
-                vm.ID = 1; 
-                callAPI(); 
-            //正解の選択肢なら次の段階の項目をDynamoDBから取得 
-            } else if ((vm.CorrectChoice != '0') && (playerChoice == vm.CorrectChoice)) { 
-                vm.ID = vm.ID + 1; 
-                callAPI(); 
-            //不正解なら結果を表示 
-            } else if ((vm.CorrectChoice != '0') && (playerChoice != vm.CorrectChoice)) { 
-                vm.ID = 0; 
-                vm.Situation = vm.Result; 
-                vm.Choice1 = ''; 
-                vm.Choice2 = ''; 
-                vm.Result = ''; 
-                vm.CorrectChoice = '0'; 
-            } 
-        } 
-        selectChoice('1');
-        //APIの呼び出しを定義する 
-        var callAPI = ()=>{ 
-            //idは現在の次の段階を代入 
-            var id = vm.ID; 
-            // ヘッダーオブジェクトの生成 
-            var myHeaders = new Headers(); 
-            myHeaders.append("Content-Type", "application/json"); 
-            //Lambda側に渡す値の設定 
-            var raw = JSON.stringify({"ID":id}); 
-            // JSONオブジェクトの生成 
-            var requestOptions = { 
-                method: 'GET', 
-                headers: myHeaders, 
-                body: raw, 
-                redirect: 'follow' 
-            }; 
-            // API経由でのLambdaからのレスポンスをVueインスタンスに代入する 
-            fetch("https://osztepu9jh.execute-api.ap-northeast-1.amazonaws.com/dev/items/" + id, requestOptions) 
-            .then(response => response.text()) 
-            .then(result => { 
-                vm.ID = JSON.parse(result).body['ID']; 
-                vm.Situation = JSON.parse(result).body['Situation']; 
-                vm.Choice1 = JSON.parse(result).body['Choice1']; 
-                vm.Choice2 = JSON.parse(result).body['Choice2']; 
-                vm.Result = JSON.parse(result).body['Result']; 
-                vm.CorrectChoice = JSON.parse(result).body['Correctchoice']; 
-                return 0; 
-            }) 
-            .catch(error => console.log('error', error)); 
-        } 
+
+//  selectChoice('0');
+
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->

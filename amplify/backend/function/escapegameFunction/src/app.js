@@ -86,7 +86,7 @@ app.get(path + hashKeyPath, function(req, res) {
       res.statusCode = 500;
       res.json({error: 'Could not load items: ' + err});
     } else {
-      res.json(data.Items);
+      res.json(data.Items[0]);
     }
   });
 });

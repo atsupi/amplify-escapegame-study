@@ -6,12 +6,12 @@
   import { API } from 'aws-amplify'
 
   const auth = useAuthenticator();
-  const debug_mode = true;
+  const debug_mode = false;
 
   defineProps({msg: String});
 
   const ID = ref('0');
-  const Situation = ref('状態無し');
+  const Situation = ref('リスタートをクリックして下さい。');
   const Choice1 = ref('なし');
   const Choice2 = ref('なし'); 
   const Result = ref('なし');
@@ -31,7 +31,7 @@
         Situation.value = "状態変化1";
         callAPI(); 
     //正解の選択肢なら次の段階の項目をDynamoDBから取得 
-    } else if ((CorrectChoice.value != '0') && (playerChoice === CorrectChoice.value)) { 
+    } else if ((CorrectChoice.value != '0') && (playerChoice == CorrectChoice.value)) { 
         ID.value = ID.value + 1; 
         callAPI(); 
     //不正解なら結果を表示 
@@ -102,7 +102,7 @@
     <p>部屋から脱出せよ！</p> 
     <div id="Situation1"> 
         <p v-if="debug_mode">{{ID}}:{{CorrectChoice}}</p> 
-        <p v-if="debug_mode">{{Situation}}</p> 
+        <p>{{Situation}}</p> 
         <p v-if="debug_mode">{{Result}}</p> 
         <p>選択肢１:{{Choice1}}</p> 
         <button type="button" @click="selectChoice('1')">選択肢１を選ぶ</button> 
